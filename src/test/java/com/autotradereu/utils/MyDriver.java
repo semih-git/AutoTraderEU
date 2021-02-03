@@ -21,10 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyDriver {
+    //Paralel testing icin Thread olusturuyoruz.
     private static ThreadLocal<WebDriver> DriverPool = new ThreadLocal<>();
 
-    private MyDriver() {
-    }
+    //Constructor private olunca singelton object oluyor.
+    private MyDriver() { }
 
     static Logger logger = LoggerFactory.getLogger(MyDriver.class);
 
@@ -44,7 +45,6 @@ public class MyDriver {
             switch (browser) {
                 case "chrome":
 
-
                     WebDriverManager.chromedriver().setup();
                     DesiredCapabilities caps = new DesiredCapabilities();
 
@@ -63,7 +63,9 @@ public class MyDriver {
                     profile.put("managed_default_content_settings", contentSettings);
                     prefs.put("profile", profile);
                     options.setExperimentalOption("prefs", prefs);
+                    //	options.addArguments("--incognito");
                     caps.setCapability(ChromeOptions.CAPABILITY, options);
+
 
                     DriverPool.set(new ChromeDriver(options));
                     break;
@@ -105,7 +107,7 @@ public class MyDriver {
                     try {
                         ChromeOptions chromeOptions = new ChromeOptions();
                         chromeOptions.setCapability("platform", Platform.ANY);
-                        DriverPool.set(new RemoteWebDriver(new URL("http://ec2-3-95-173-125.compute-1.amazonaws.com:4444//wd/hub"), chromeOptions));
+                        DriverPool.set(new RemoteWebDriver(new URL("http://10.0.0.9:37771/wd/hub"), chromeOptions));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -126,7 +128,7 @@ public class MyDriver {
     }
 
     public static void close() {
-        //	DriverPool.get().quit();
+        DriverPool.get().quit();
         DriverPool.remove();
     }
 }

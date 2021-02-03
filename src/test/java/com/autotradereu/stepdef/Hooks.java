@@ -14,32 +14,32 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
 public class Hooks {
-        Logger logger = LoggerFactory.getLogger(Hooks.class);
+    Logger logger = LoggerFactory.getLogger(Hooks.class);
 
-        @Before
-        public void setup() {
-            logger.info("##### SETUP STARTED (HOOK) ######");
-            MyDriver.get().manage().window().maximize();
+    @Before
+    public void setup() {
+        logger.info("##### SETUP STARTED (HOOK) ######");
+        //MyDriver.get().manage().window().maximize();
 
-            MyDriver.get().get(ConfigurationReader.getProperty("url1"));
-            MyDriver.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        //MyDriver.get().manage().deleteAllCookies();
+        MyDriver.get().manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 
+    }
+
+    @After
+    public void after(Scenario scenario){
+        if(scenario.isFailed()){
+            logger.error("!!!!Test Failed! check the screenshot!!!!");
+            byte[] screenshot= ((TakesScreenshot)MyDriver.get()).getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshot,"image/png","Screenshot");
+            //scenario.embed(screenshot,"images/png"); versiyon 4.7.4
+
+        }else {
+            logger.info("Test Completed");
         }
+        logger.info("###### END OF TESTS #####");
 
-        @After
-        public void after(Scenario scenario){
-            if(scenario.isFailed()){
-                logger.error("!!!!Test Failed! check the screenshot!!!!");
-                byte[] screenshot= ((TakesScreenshot)MyDriver.get()).getScreenshotAs(OutputType.BYTES);
-                scenario.attach(screenshot,"image/png","Screenshot");
-                //scenario.embed(screenshot,"images/png"); versiyon 4.7.4
+        MyDriver.close();
 
-            }else {
-                logger.info("Test Completed");
-            }
-            logger.info("###### END OF TESTS #####");
-
-            MyDriver.close();
-        }
-
+    }
 }

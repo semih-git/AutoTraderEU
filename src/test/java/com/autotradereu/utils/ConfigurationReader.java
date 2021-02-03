@@ -1,5 +1,8 @@
 package com.autotradereu.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -10,11 +13,14 @@ public class ConfigurationReader {
      */
     private static Properties configFile;
 
+    static Logger logger =  LoggerFactory.getLogger(ConfigurationReader.class);
+
+
     static {
         try {
 
             //File path of configuration.properties
-            FileInputStream fileInputStream = new FileInputStream("configuration-qa.properties");
+            FileInputStream fileInputStream = new FileInputStream("autoconfig.properties");
             //initialize properties object
             configFile = new Properties();
             //load configuration.properties file
@@ -22,7 +28,7 @@ public class ConfigurationReader {
             //close input stream
             fileInputStream.close();
         } catch (IOException e) {
-            System.out.println("Failed to load properties file!");
+            logger.info("Failed to load properties file!");
             e.printStackTrace();
         }
     }
